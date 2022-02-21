@@ -21,18 +21,16 @@ final class protectTest extends TestCase
 		$protectProp = new \ReflectionProperty( xcsrf::class, "protect" );
 		$protectProp->setAccessible( true );
 
-		// the request and storage engines so we can test
 		$request = new testRequest();
 			$request->value = 'ABC123';
 		$storage = new testStorage();
-		$protect = new testProtect();
+			$storage->setValue( 'key', 'ZBC123' );
 
 		$instance = xcsrf::getInstance();
 		$requestProp->setValue( $instance, $request );
 		$storageProp->setValue( $instance, $storage );
-		$protectProp->setValue( $instance, $protect );
 
-		$instance->protect();
+		$this->assertFalse( $instance->protect() );
 	}
 	//------------------------------------------------------------------------
 	public function testProtectPasses()
@@ -46,30 +44,16 @@ final class protectTest extends TestCase
 		$protectProp = new \ReflectionProperty( xcsrf::class, "protect" );
 		$protectProp->setAccessible( true );
 
-		// the request and storage engines so we can test
 		$request = new testRequest();
 			$request->value = 'ABC123';
 		$storage = new testStorage();
 			$storage->setValue( 'key', 'ABC123' );
-		$protect = new testProtect();
 
 		$instance = xcsrf::getInstance();
 		$requestProp->setValue( $instance, $request );
 		$storageProp->setValue( $instance, $storage );
-		$protectProp->setValue( $instance, $protect );
+
 
 		$this->assertTrue( $instance->protect(), 'Protection not needed.' );
 	}
-
 }
-
-// if( $_POST )
-// {
-// 	xcsrf::getInstance( new xcsrfSession(), new xcsrfHttp() )->protect();
-// 	// process POST request here.
-// }
-
-// echo '<form>';
-// echo '<input type="hidden" value="' . xcsrf::getInstance()->getCode() . '"></input>';
-// echo '<input type="submit" value="Submit"></input>';
-// echo '</form>';
